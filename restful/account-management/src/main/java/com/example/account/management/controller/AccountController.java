@@ -46,4 +46,10 @@ public class AccountController {
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAllAccounts() {
+        Long count = accountService.countAllAccounts();
+        return ResponseEntity.ok(count);
+    }
 }
