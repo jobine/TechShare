@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Account a WHERE a.email = :email")
-    Optional<Account> findAccountByEmail(@Param("email") String email);
+    Optional<Account> findByEmail(@Param("email") String email);
 }

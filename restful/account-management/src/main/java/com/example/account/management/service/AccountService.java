@@ -18,10 +18,17 @@ public class AccountService {
 
     public Account createAccount(Account account) {
         accountRepository
-                .findAccountByEmail(account.getEmail())
+                .findById(account.getId())
+                .ifPresent(a -> {
+                    throw new ResourceAlreadyExistsException(String.format("Account with id %s already exists", a.getId()));
+                });
+
+        accountRepository
+                .findByEmail(account.getEmail())
                 .ifPresent(a -> {
                     throw new ResourceAlreadyExistsException(String.format("Account with email %s already exists.", a.getEmail()));
                 });
+
         return accountRepository.save(account);
     }
 
@@ -33,7 +40,7 @@ public class AccountService {
 
     public Account getAccountByEmail(String email) {
         return accountRepository
-                .findAccountByEmail(email)
+                .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
     }
 
@@ -45,7 +52,7 @@ public class AccountService {
         Account account = getAccountById(id);
 
         account.setName(accountDetails.getName());
-        account.setEmail(accountDetails.getEmail());
+//        account.setEmail(accountDetails.getEmail());
         account.setPassword(accountDetails.getPassword());
 
         return accountRepository.save(account);

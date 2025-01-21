@@ -17,31 +17,29 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
 
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
         body.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
         body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT.value());
         body.put("error", HttpStatus.CONFLICT.getReasonPhrase());
         body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
-//    @ExceptionHandler({RuntimeException.class})
-//    public ResponseEntity<Map<String, Object>> handleGenericException(RuntimeException ex) {
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("timestamp", LocalDateTime.now());
-//        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        body.put("error", "Internal Server Error.");
-//        body.put("message", ex.getMessage());
-//        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<Map<String, Object>> handleGenericException(RuntimeException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

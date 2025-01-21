@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -18,9 +20,13 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
+    public ResponseEntity<Map<String, Object>> createAccount(@RequestBody Account account) {
         Account createdAccount = accountService.createAccount(account);
-        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("id", createdAccount.getId());
+
+        return new ResponseEntity<>(body, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -48,8 +54,12 @@ public class AccountController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> countAllAccounts() {
+    public ResponseEntity<Map<String, Object>> countAllAccounts() {
         Long count = accountService.countAllAccounts();
-        return ResponseEntity.ok(count);
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("count", count);
+
+        return ResponseEntity.ok(body);
     }
 }
