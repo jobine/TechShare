@@ -3,6 +3,7 @@ package com.example.account.management.controller;
 
 import com.example.account.management.model.dto.AccountCreateDTO;
 import com.example.account.management.model.dto.AccountDTO;
+import com.example.account.management.model.dto.AccountPasswordUpdateDTO;
 import com.example.account.management.model.dto.AccountUpdateDTO;
 import com.example.account.management.model.entity.Account;
 import com.example.account.management.service.AccountService;
@@ -54,6 +55,12 @@ public class AccountController {
         AccountDTO accountDTO = convertAccountToDTO(account);
 
         return ResponseEntity.ok(accountDTO);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<Void> updateAccountPassword(@PathVariable Long id, @Validated @RequestBody AccountPasswordUpdateDTO accountPasswordUpdateDTO) {
+        accountService.updatePassword(id, accountPasswordUpdateDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
