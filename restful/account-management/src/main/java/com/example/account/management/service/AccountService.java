@@ -45,13 +45,13 @@ public class AccountService {
     public Account getAccountById(Long id) {
         return accountRepository
                 .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account with id %s is not found.", id)));
     }
 
     public Account getAccountByEmail(String email) {
         return accountRepository
                 .findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account with email %s is not found.", email)));
     }
 
     public List<Account> getAllAccounts() {
