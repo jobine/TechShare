@@ -2,6 +2,9 @@
 package com.example.account.management.controller;
 
 import com.example.account.management.common.ResponseBody;
+import com.example.account.management.common.validation.annotation.ValidatedAccountId;
+import com.example.account.management.common.validation.annotation.ValidatedPageNumber;
+import com.example.account.management.common.validation.annotation.ValidatedPageSize;
 import com.example.account.management.model.dto.AccountCreateDTO;
 import com.example.account.management.model.dto.AccountDTO;
 import com.example.account.management.model.dto.AccountPasswordUpdateDTO;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Validated
 @RestController
 @RequestMapping("/v1/accounts")
 public class AccountController {
@@ -35,7 +39,7 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseBody<AccountDTO>> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<ResponseBody<AccountDTO>> getAccountById(@PathVariable @ValidatedAccountId Long id) {
         Account account = accountService.getAccountById(id);
         AccountDTO accountDTO = convertAccountToDTO(account);
         ResponseBody<AccountDTO> body = new ResponseBody<>(accountDTO);
@@ -44,7 +48,7 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseBody<Page<AccountDTO>>> getAllAccounts(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ResponseBody<Page<AccountDTO>>> getAllAccounts(@RequestParam @ValidatedPageNumber int page, @RequestParam @ValidatedPageSize int size) {
         Page<Account> accounts = accountService.getAccountsWithPagination(page, size);
         Page<AccountDTO> accountDTOs = accounts.map(this::convertAccountToDTO);
         ResponseBody<Page<AccountDTO>> body = new ResponseBody<>(accountDTOs);
@@ -53,7 +57,7 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseBody<AccountDTO>> updateAccount(@PathVariable Long id, @Validated @RequestBody AccountUpdateDTO accountUpdateDTO) {
+    public ResponseEntity<ResponseBody<AccountDTO>> updateAccount(@PathVariable @ValidatedAccountId Long id, @Validated @RequestBody AccountUpdateDTO accountUpdateDTO) {
         Account account = accountService.updateAccount(id, accountUpdateDTO);
         AccountDTO accountDTO = convertAccountToDTO(account);
         ResponseBody<AccountDTO> body = new ResponseBody<>(accountDTO);
@@ -62,13 +66,13 @@ public class AccountController {
     }
 
     @PutMapping("/{id}/password")
-    public ResponseEntity<Void> updateAccountPassword(@PathVariable Long id, @Validated @RequestBody AccountPasswordUpdateDTO accountPasswordUpdateDTO) {
+    public ResponseEntity<Void> updateAccountPassword(@PathVariable @ValidatedAccountId Long id, @Validated @RequestBody AccountPasswordUpdateDTO accountPasswordUpdateDTO) {
         accountService.updatePassword(id, accountPasswordUpdateDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAccount(@PathVariable @ValidatedAccountId Long id) {
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
     }

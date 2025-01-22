@@ -1,6 +1,7 @@
 package com.example.account.management.exception;
 
 import com.example.account.management.common.ResponseBody;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,7 +42,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
-    @ExceptionHandler({RuntimeException.class})
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public ResponseEntity<ResponseBody<String>> handleConstraintViolationException(jakarta.validation.ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining("; "));
+        ResponseBody<String> body = new ResponseBody<>(LocalDateTime.now(), message);
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseBody<String>> handleGenericException(RuntimeException ex) {
         ResponseBody<String> body = new ResponseBody<>(LocalDateTime.now(), ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
