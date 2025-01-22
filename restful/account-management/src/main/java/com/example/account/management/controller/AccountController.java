@@ -8,14 +8,14 @@ import com.example.account.management.model.dto.AccountPasswordUpdateDTO;
 import com.example.account.management.model.dto.AccountUpdateDTO;
 import com.example.account.management.model.entity.Account;
 import com.example.account.management.service.AccountService;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,10 +44,10 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseBody<List<AccountDTO>>> getAllAccounts() {
-        List<Account> accounts = accountService.getAllAccounts();
-        List<AccountDTO> accountDTOs = accounts.stream().map(this::convertAccountToDTO).toList();
-        ResponseBody<List<AccountDTO>> body = new ResponseBody<>(accountDTOs);
+    public ResponseEntity<ResponseBody<Page<AccountDTO>>> getAllAccounts(@RequestParam int page, @RequestParam int size) {
+        Page<Account> accounts = accountService.getAccountsWithPagination(page, size);
+        Page<AccountDTO> accountDTOs = accounts.map(this::convertAccountToDTO);
+        ResponseBody<Page<AccountDTO>> body = new ResponseBody<>(accountDTOs);
 
         return ResponseEntity.ok(body);
     }

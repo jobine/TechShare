@@ -4,15 +4,16 @@ package com.example.account.management.service;
 import com.example.account.management.exception.ResourceAlreadyExistsException;
 import com.example.account.management.exception.ResourceNotFoundException;
 import com.example.account.management.model.dto.AccountCreateDTO;
-  import com.example.account.management.model.dto.AccountPasswordUpdateDTO;
+import com.example.account.management.model.dto.AccountPasswordUpdateDTO;
 import com.example.account.management.model.dto.AccountUpdateDTO;
 import com.example.account.management.model.entity.Account;
 import com.example.account.management.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service
@@ -54,8 +55,13 @@ public class AccountService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Account with email %s is not found.", email)));
     }
 
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+//    public List<Account> getAllAccounts() {
+//        return accountRepository.findAll();
+//    }
+
+    public Page<Account> getAccountsWithPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return accountRepository.findAll(pageable);
     }
 
     public void updatePassword(Long id, AccountPasswordUpdateDTO accountPasswordUpdateDTO) {
