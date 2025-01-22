@@ -1,7 +1,7 @@
 
 package com.example.account.management.repository;
 
-import com.example.account.management.model.Account;
+import com.example.account.management.model.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

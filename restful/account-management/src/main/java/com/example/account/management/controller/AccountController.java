@@ -1,8 +1,12 @@
 
 package com.example.account.management.controller;
 
-import com.example.account.management.model.Account;
+import com.example.account.management.model.dto.AccountCreateDTO;
+import com.example.account.management.model.dto.AccountDTO;
+import com.example.account.management.model.dto.AccountUpdateDTO;
+import com.example.account.management.model.entity.Account;
 import com.example.account.management.service.AccountService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,38 +17,43 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/v1/accounts")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createAccount(@RequestBody Account account) {
-        Account createdAccount = accountService.createAccount(account);
-        Map<String, Object> body = new HashMap<>();
+    public ResponseEntity<AccountDTO> createAccount(@Validated @RequestBody AccountCreateDTO accountCreateDTO) {
+        Account createdAccount = accountService.createAccount(accountCreateDTO);
+        AccountDTO accountDTO = convertAccountToDTO(createdAccount);
 
-        body.put("id", createdAccount.getId());
-
-        return new ResponseEntity<>(body, HttpStatus.CREATED);
+        return new ResponseEntity<>(accountDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Long id) {
         Account account = accountService.getAccountById(id);
-        return ResponseEntity.ok(account);
+        AccountDTO accountDTO = convertAccountToDTO(account);
+
+        return ResponseEntity.ok(accountDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<Account>> getAllAccounts() {
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         List<Account> accounts = accountService.getAllAccounts();
-        return ResponseEntity.ok(accounts);
+        List<AccountDTO> accountDTOs = accounts.stream().map(this::convertAccountToDTO).toList();
+
+        return ResponseEntity.ok(accountDTOs);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account accountDetails) {
-        Account updatedAccount = accountService.updateAccount(id, accountDetails);
-        return ResponseEntity.ok(updatedAccount);
+    @PatchMapping("/{id}")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long id, @Validated @RequestBody AccountUpdateDTO accountUpdateDTO) {
+        Account account = accountService.updateAccount(id, accountUpdateDTO);
+
+        AccountDTO accountDTO = convertAccountToDTO(account);
+
+        return ResponseEntity.ok(accountDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -61,5 +70,13 @@ public class AccountController {
         body.put("count", count);
 
         return ResponseEntity.ok(body);
+    }
+
+    private AccountDTO convertAccountToDTO(Account account) {
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(account.getId());
+        accountDTO.setName(account.getName());
+        accountDTO.setEmail(account.getEmail());
+        return accountDTO;
     }
 }
