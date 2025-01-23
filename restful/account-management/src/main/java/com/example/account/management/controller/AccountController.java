@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class AccountController {
     private AccountService accountService;
 
     @Operation(summary = "Create an account", description = "Create an account by providing the necessary details.")
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBody<AccountDTO>> createAccount(
             @Schema(implementation = AccountCreateDTO.class, description = "The details of the account to be created.")
             @Validated
@@ -46,7 +47,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Get an account by ID", description = "Get an account by providing the account ID.")
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBody<AccountDTO>> getAccountById(
             @Schema(description = "The ID of the account to be retrieved.", example = "1")
             @ValidatedAccountId
@@ -60,7 +61,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Get all accounts", description = "Get all accounts with pagination.")
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBody<Page<AccountDTO>>> getAllAccounts(
             @Schema(description = "The page number to retrieve.", example = "0")
             @ValidatedPageNumber
@@ -78,7 +79,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Update an account", description = "Update an account by providing the account ID and the details to be updated.")
-    @PatchMapping("/{id}")
+    @PatchMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBody<AccountDTO>> updateAccount(
             @Schema(description = "The ID of the account to be updated.", example = "1")
             @ValidatedAccountId
@@ -122,7 +123,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Count all accounts", description = "Count all accounts.")
-    @GetMapping("/count")
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBody<Map<String, Long>>> countAllAccounts() {
         Long count = accountService.countAllAccounts();
         Map<String, Long> data = new HashMap<>();
