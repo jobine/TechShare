@@ -92,8 +92,11 @@ public class AccountService {
     }
 
     public void deleteAccount(Long id) {
-        Account account = getAccountById(id);
-        accountRepository.delete(account);
+        accountRepository
+                .findById(id)
+                .ifPresent(a -> {
+                    accountRepository.delete(a);
+                });
     }
 
     public Long countAllAccounts() {
